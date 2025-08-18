@@ -26,6 +26,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { useData } from '@/context/data-context';
+import { useEffect } from 'react';
 
 const formSchema = z.object({
   memberId: z.string({ required_error: 'Please select a member.' }),
@@ -43,9 +44,12 @@ export function PaymentForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: 0,
-      date: new Date(),
     },
   });
+
+  useEffect(() => {
+    form.setValue('date', new Date());
+  }, [form]);
 
   const handleSubmit = (data: PaymentFormValues) => {
     addPayment({
