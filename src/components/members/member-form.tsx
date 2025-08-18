@@ -73,8 +73,7 @@ export function MemberForm({ onSubmit, onFinished, member }: MemberFormProps) {
               <FormLabel>Monthly Payment Amount</FormLabel>
               <FormControl>
                 <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">$</span>
-                    <Input type="number" placeholder="25.00" {...field} className="pl-7" />
+                    <Input type="number" placeholder="5000.00" {...field} />
                 </div>
               </FormControl>
               <FormMessage />
