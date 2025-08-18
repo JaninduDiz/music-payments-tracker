@@ -2,16 +2,17 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import type { Member, Payment } from '@/types';
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from '@/lib/supabase-client';
 
 interface DataContextType {
   members: Member[];
   payments: Payment[];
   loading: boolean;
-  addMember: (data: Omit<Member, 'id' | 'createdAt'>) => void;
-  updateMember: (id: string, data: Partial<Omit<Member, 'id' | 'createdAt'>>) => void;
-  deleteMember: (id: string) => void;
-  addPayment: (data: Omit<Payment, 'id'>) => void;
+  addMember: (data: Omit<Member, 'id' | 'createdAt'>) => Promise<void>;
+  updateMember: (id: string, data: Partial<Omit<Member, 'id' | 'createdAt'>>) => Promise<void>;
+  deleteMember: (id: string) => Promise<void>;
+  addPayment: (data: Omit<Payment, 'id'>) => Promise<void>;
   getMemberById: (id: string) => Member | undefined;
 }
 
@@ -23,78 +24,95 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
+  const fetchAllData = useCallback(async () => {
+    setLoading(true);
     try {
-      const storedMembers = localStorage.getItem('music-payments-members');
-      const storedPayments = localStorage.getItem('music-payments-payments');
-      if (storedMembers) setMembers(JSON.parse(storedMembers));
-      if (storedPayments) setPayments(JSON.parse(storedPayments));
-    } catch (error) {
-      console.error("Failed to load data from local storage", error);
+      const [membersRes, paymentsRes] = await Promise.all([
+        supabase.from('members').select('*').order('createdAt', { ascending: true }),
+        supabase.from('payments').select('*').order('date', { ascending: false })
+      ]);
+
+      if (membersRes.error) throw membersRes.error;
+      if (paymentsRes.error) throw paymentsRes.error;
+      
+      setMembers(membersRes.data as Member[]);
+      setPayments(paymentsRes.data as Payment[]);
+
+    } catch (error: any) {
+      console.error("Failed to load data from Supabase", error);
       toast({
-        title: "Error",
-        description: "Could not load saved data.",
+        title: "Database Error",
+        description: `Could not load data: ${error.message}`,
         variant: "destructive",
       });
+    } finally {
+        setLoading(false);
     }
-    setLoading(false);
   }, [toast]);
 
   useEffect(() => {
-    if (!loading) {
-      try {
-        localStorage.setItem('music-payments-members', JSON.stringify(members));
-      } catch (error) {
-        console.error("Failed to save members to local storage", error);
-        toast({
-            title: "Error",
-            description: "Could not save member data.",
-            variant: "destructive",
-          });
-      }
+    fetchAllData();
+  }, [fetchAllData]);
+
+  const addMember = useCallback(async (data: Omit<Member, 'id' | 'createdAt'>) => {
+    const newMember = { ...data, createdAt: new Date().toISOString() };
+    const { data: insertedData, error } = await supabase
+      .from('members')
+      .insert(newMember)
+      .select()
+      .single();
+    
+    if (error) {
+      console.error('Error adding member:', error);
+      toast({ title: "Error", description: "Could not add member.", variant: "destructive" });
+    } else if (insertedData) {
+      setMembers(prev => [...prev, insertedData as Member]);
     }
-  }, [members, loading, toast]);
+  }, [toast]);
 
-  useEffect(() => {
-    if (!loading) {
-      try {
-        localStorage.setItem('music-payments-payments', JSON.stringify(payments));
-      } catch (error) {
-        console.error("Failed to save payments to local storage", error);
-         toast({
-            title: "Error",
-            description: "Could not save payment data.",
-            variant: "destructive",
-          });
-      }
+  const updateMember = useCallback(async (id: string, data: Partial<Omit<Member, 'id' | 'createdAt'>>) => {
+    const { data: updatedData, error } = await supabase
+      .from('members')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating member:', error);
+      toast({ title: "Error", description: "Could not update member.", variant: "destructive" });
+    } else if (updatedData) {
+      setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updatedData } : m));
     }
-  }, [payments, loading, toast]);
+  }, [toast]);
 
-  const addMember = useCallback((data: Omit<Member, 'id' | 'createdAt'>) => {
-    const newMember: Member = {
-      ...data,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-    };
-    setMembers(prev => [...prev, newMember]);
-  }, []);
+  const deleteMember = useCallback(async (id: string) => {
+    // Supabase cascade delete should handle payments if set up correctly.
+    const { error } = await supabase.from('members').delete().eq('id', id);
 
-  const updateMember = useCallback((id: string, data: Partial<Omit<Member, 'id' | 'createdAt'>>) => {
-    setMembers(prev => prev.map(m => m.id === id ? { ...m, ...data } : m));
-  }, []);
+    if (error) {
+       console.error('Error deleting member:', error);
+       toast({ title: "Error", description: "Could not delete member.", variant: "destructive" });
+    } else {
+       setMembers(prev => prev.filter(m => m.id !== id));
+       setPayments(prev => prev.filter(p => p.memberId !== id)); 
+    }
+  }, [toast]);
 
-  const deleteMember = useCallback((id: string) => {
-    setMembers(prev => prev.filter(m => m.id !== id));
-    setPayments(prev => prev.filter(p => p.memberId !== id)); // Also delete associated payments
-  }, []);
-
-  const addPayment = useCallback((data: Omit<Payment, 'id'>) => {
-    const newPayment: Payment = {
-      ...data,
-      id: crypto.randomUUID(),
-    };
-    setPayments(prev => [newPayment, ...prev].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-  }, []);
+  const addPayment = useCallback(async (data: Omit<Payment, 'id'>) => {
+    const { data: insertedData, error } = await supabase
+        .from('payments')
+        .insert(data)
+        .select()
+        .single();
+    
+    if (error) {
+        console.error('Error adding payment:', error);
+        toast({ title: "Error", description: "Could not add payment.", variant: "destructive" });
+    } else if (insertedData) {
+        setPayments(prev => [insertedData as Payment, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    }
+  }, [toast]);
 
   const getMemberById = useCallback((id: string) => {
       return members.find(m => m.id === id);

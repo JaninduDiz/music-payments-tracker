@@ -22,15 +22,15 @@ export default function MembersPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
 
-  const handleFormSubmit = (data: Omit<Member, 'id' | 'createdAt'>) => {
+  const handleFormSubmit = async (data: Omit<Member, 'id' | 'createdAt'>) => {
     if (selectedMember) {
-      updateMember(selectedMember.id, data);
+      await updateMember(selectedMember.id, data);
       toast({
           title: "Member Updated",
           description: `${data.name} has been updated successfully.`,
         })
     } else {
-      addMember(data);
+      await addMember(data);
        toast({
           title: "Member Added",
           description: `${data.name} has been added successfully.`,

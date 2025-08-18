@@ -27,6 +27,9 @@ import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { useData } from '@/context/data-context';
 import { useEffect } from 'react';
+import { useToast } from "@/hooks/use-toast"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
 
 const formSchema = z.object({
   memberId: z.string({ required_error: 'Please select a member.' }),
@@ -38,6 +41,7 @@ type PaymentFormValues = z.infer<typeof formSchema>;
 
 export function PaymentForm() {
   const { members, addPayment } = useData();
+  const { toast } = useToast();
   const activeMembers = members.filter(m => m.isActive);
 
   const form = useForm<PaymentFormValues>({
@@ -48,15 +52,20 @@ export function PaymentForm() {
   });
 
   useEffect(() => {
+    // Set default date on client-side to avoid hydration mismatch
     form.setValue('date', new Date());
   }, [form]);
 
-  const handleSubmit = (data: PaymentFormValues) => {
-    addPayment({
+  const handleSubmit = async (data: PaymentFormValues) => {
+    await addPayment({
       ...data,
       date: data.date.toISOString(),
     });
     form.reset({ memberId: data.memberId, amount: 0, date: new Date() });
+     toast({
+        title: "Payment Added",
+        description: `Payment of ${data.amount} for has been recorded.`,
+    })
   };
 
   return (
@@ -143,7 +152,7 @@ export function PaymentForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={activeMembers.length === 0}>Add Payment</Button>
+            <Button type="submit" className="w-full" disabled={activeMembers.length === 0 || form.formState.isSubmitting}>Add Payment</Button>
             {activeMembers.length === 0 && <p className="text-sm text-center text-muted-foreground pt-2">Add an active member first to record a payment.</p>}
           </form>
         </Form>
@@ -151,5 +160,3 @@ export function PaymentForm() {
     </Card>
   );
 }
-// Needed ShadCN components
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

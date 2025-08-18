@@ -7,16 +7,6 @@ import { useData } from '@/context/data-context';
 import { useEffect } from 'react';
 
 export default function PaymentsPage() {
-    const { addPayment } = useData();
-    const { toast } = useToast();
-
-    const handleAddPayment = (data: any) => {
-        addPayment(data);
-        toast({
-            title: "Payment Added",
-            description: `Payment of ${data.amount} for has been recorded.`,
-        })
-    };
     
     return (
         <div className="container mx-auto max-w-6xl p-4 md:p-6">

@@ -29,7 +29,7 @@ const formSchema = z.object({
 type MemberFormValues = z.infer<typeof formSchema>;
 
 interface MemberFormProps {
-  onSubmit: (data: MemberFormValues) => void;
+  onSubmit: (data: MemberFormValues) => Promise<void>;
   onFinished: () => void;
   member?: Member | null;
 }
@@ -44,8 +44,8 @@ export function MemberForm({ onSubmit, onFinished, member }: MemberFormProps) {
     },
   });
 
-  const handleSubmit = (data: MemberFormValues) => {
-    onSubmit(data);
+  const handleSubmit = async (data: MemberFormValues) => {
+    await onSubmit(data);
     onFinished();
   };
 
@@ -99,7 +99,7 @@ export function MemberForm({ onSubmit, onFinished, member }: MemberFormProps) {
         />
         <div className="flex justify-end gap-2">
             <Button type="button" variant="ghost" onClick={onFinished}>Cancel</Button>
-            <Button type="submit">{member ? 'Save Changes' : 'Add Member'}</Button>
+            <Button type="submit" disabled={form.formState.isSubmitting}>{member ? 'Save Changes' : 'Add Member'}</Button>
         </div>
       </form>
     </Form>

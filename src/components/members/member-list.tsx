@@ -26,13 +26,13 @@ export function MemberList({ onEdit }: MemberListProps) {
     const [deletingMember, setDeletingMember] = useState<Member | null>(null);
 
 
-    const handleToggleStatus = (member: Member) => {
-        updateMember(member.id, { isActive: !member.isActive });
+    const handleToggleStatus = async (member: Member) => {
+        await updateMember(member.id, { isActive: !member.isActive });
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (deletingMember) {
-            deleteMember(deletingMember.id);
+            await deleteMember(deletingMember.id);
             setDeletingMember(null);
         }
     }
