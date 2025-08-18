@@ -6,11 +6,18 @@ import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from "@/components/ui/scroll-area"
+import type { Payment } from '@/types';
 
-export function RecentPayments() {
+interface RecentPaymentsProps {
+  filteredPayments?: Payment[] | null;
+}
+
+export function RecentPayments({ filteredPayments }: RecentPaymentsProps) {
   const { payments, getMemberById } = useData();
 
-  if (payments.length === 0) {
+  const displayPayments = filteredPayments ?? payments;
+
+  if (displayPayments.length === 0) {
     return (
         <Card className="h-full">
             <CardHeader>
@@ -19,7 +26,7 @@ export function RecentPayments() {
             </CardHeader>
             <CardContent className="flex h-full items-center justify-center pb-16">
                  <div className="text-center">
-                    <p className="text-muted-foreground">Your recent payments will show up here.</p>
+                    <p className="text-muted-foreground">{filteredPayments ? "No payments found for your search." : "Your recent payments will show up here."}</p>
                  </div>
             </CardContent>
         </Card>
@@ -30,12 +37,12 @@ export function RecentPayments() {
     <Card>
         <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>A log of the most recent payments.</CardDescription>
+            <CardDescription>{filteredPayments ? "Showing results from your search." : "A log of the most recent payments."}</CardDescription>
         </CardHeader>
         <CardContent>
             <ScrollArea className="h-[450px]">
                 <div className="space-y-4">
-                    {payments.map(payment => {
+                    {displayPayments.map(payment => {
                         const member = getMemberById(payment.memberId);
                         return (
                         <div key={payment.id} className="flex items-center">

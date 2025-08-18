@@ -2,12 +2,13 @@
 
 import { PaymentForm } from '@/components/payments/payment-form';
 import { RecentPayments } from '@/components/payments/recent-payments';
-import { useToast } from "@/hooks/use-toast"
-import { useData } from '@/context/data-context';
-import { useEffect } from 'react';
+import { AISearch } from '@/components/ai/ai-search';
+import { useState } from 'react';
+import type { Payment } from '@/types';
 
 export default function PaymentsPage() {
-    
+    const [filteredPayments, setFilteredPayments] = useState<Payment[] | null>(null);
+
     return (
         <div className="container mx-auto max-w-6xl p-4 md:p-6">
             <div className="mb-6">
@@ -15,11 +16,12 @@ export default function PaymentsPage() {
                  <p className="text-muted-foreground">Record new payments and view recent activity.</p>
             </div>
             <div className="grid gap-8 lg:grid-cols-5">
-                <div className="lg:col-span-2">
+                <div className="space-y-8 lg:col-span-2">
                     <PaymentForm />
+                    <AISearch onResults={setFilteredPayments} />
                 </div>
                 <div className="lg:col-span-3">
-                    <RecentPayments />
+                    <RecentPayments filteredPayments={filteredPayments} />
                 </div>
             </div>
         </div>
