@@ -8,6 +8,7 @@ This is a web application designed to help families or groups manage and track s
 - **Payment Tracking:** Log payments for each member with specific dates.
 - **Balance Overview:** A dashboard that shows each member's payment status (paid, pending, or ahead) and the total outstanding balance for the group.
 - **Monthly Views:** Easily navigate between different months to see historical balance information.
+- **AI-Powered Search:** Ask questions in natural language to find payments.
 - **Responsive Design:** A mobile-first design that works beautifully on all devices.
 - **Persistent Storage:** All data is stored in your own Supabase project.
 
@@ -30,6 +31,7 @@ Follow these instructions to get the project up and running on your local machin
 - [Node.js](https://nodejs.org/en) (v18 or later)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 - A [Supabase](https://supabase.io/) account and project.
+- A [Gemini API Key](https://ai.google.dev/gemini-api/docs/api-key) for AI features.
 
 ### Installation
 
@@ -45,10 +47,14 @@ Follow these instructions to get the project up and running on your local machin
     ```
 
 3. **Set up environment variables:**
-   Create a file named `.env.local` in the root of your project and add your Supabase credentials:
+   Create a file named `.env` in the root of your project and add your credentials:
    ```
+   # Supabase credentials
    NEXT_PUBLIC_SUPABASE_URL=YOUR_SUPABASE_PROJECT_URL
    NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+
+   # Google Gemini API Key for AI features
+   GEMINI_API_KEY=YOUR_GEMINI_API_KEY
    ```
 
 4. **Set up Supabase tables:**
@@ -94,6 +100,16 @@ npm run dev
 ```
 
 Open [http://localhost:9002](http://localhost:9002) in your browser to see the application.
+
+## 🎨 Customizing the App
+
+### Changing the Icon
+
+For instructions on how to change the application icon, see the [ICON_GUIDE.md](./public/ICON_GUIDE.md) file.
+
+## 🚀 Deployment
+
+For deployment instructions, please refer to [DEPLOYMENTGUIDE.md](./DEPLOYMENTGUIDE.md).
 
 ## 📄 License
 
