@@ -10,6 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Suspense } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { MemberBalanceCard } from '@/components/members/member-balance-card';
 
 function MemberPaymentPageContent() {
     const params = useParams();
@@ -28,7 +29,8 @@ function MemberPaymentPageContent() {
                 <Skeleton className="h-5 w-80 mt-1" />
             </div>
             <div className="flex-1 overflow-y-auto">
-                <div className="container mx-auto max-w-4xl p-4 md:p-6">
+                <div className="container mx-auto max-w-4xl p-4 md:p-6 space-y-4">
+                    <Skeleton className="h-24 w-full" />
                     <Card>
                         <CardHeader>
                             <Skeleton className="h-6 w-40" />
@@ -73,7 +75,8 @@ function MemberPaymentPageContent() {
                 <p className="text-muted-foreground">A complete history of payments for this member.</p>
             </div>
             <div className="flex-1 overflow-y-auto">
-                <div className="container mx-auto max-w-4xl p-4 md:p-6">
+                <div className="container mx-auto max-w-4xl p-4 md:p-6 space-y-4">
+                    <MemberBalanceCard member={member} />
                     <RecentPayments memberId={memberId} />
                 </div>
             </div>
@@ -89,4 +92,3 @@ export default function MemberPaymentPage() {
         </Suspense>
     )
 }
-

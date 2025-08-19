@@ -1,15 +1,16 @@
+
 'use client';
 
 import { useMemo } from 'react';
 import { useData } from '@/context/data-context';
-import type { Member, Payment } from '@/types';
+import type { Member } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import {
-  differenceInCalendarMonths,
   endOfMonth,
   isBefore,
   isSameMonth,
   startOfMonth,
+  differenceInCalendarMonths,
 } from 'date-fns';
 import {
   Card,
@@ -30,12 +31,11 @@ interface BalanceOverviewProps {
 
 interface MemberBalance {
   member: Member;
-  totalDue: number;
-  totalPaid: number;
-  balance: number;
+  balanceForMonth: number;
   dueThisMonth: number;
   paidThisMonth: number;
   status: 'paid' | 'pending' | 'ahead' | 'unpaid';
+  cumulativeBalance: number;
 }
 
 export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
@@ -46,45 +46,45 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
 
     return activeMembers.map((member): MemberBalance => {
       const memberStartDate = new Date(member.createdAt);
-      
-      let monthsDue = 0;
-      if (isBefore(memberStartDate, endOfMonth(selectedDate))) {
-          monthsDue = differenceInCalendarMonths(endOfMonth(selectedDate), memberStartDate) + 1;
-      }
-      
-      const totalDue = monthsDue * member.monthlyAmount;
 
-      const totalPaid = payments
+      // Cumulative balance calculation up to the end of the selected month
+      const monthsDueCumulative = isBefore(memberStartDate, endOfMonth(selectedDate))
+        ? differenceInCalendarMonths(endOfMonth(selectedDate), memberStartDate) + 1
+        : 0;
+      const totalDueCumulative = monthsDueCumulative * member.monthlyAmount;
+      const totalPaidCumulative = payments
         .filter(p => p.memberId === member.id && isBefore(new Date(p.date), endOfMonth(selectedDate)))
         .reduce((sum, p) => sum + p.amount, 0);
-      
-      const balance = totalPaid - totalDue;
+      const cumulativeBalance = totalPaidCumulative - totalDueCumulative;
 
+      // Month-specific calculation
       const dueThisMonth = isBefore(memberStartDate, endOfMonth(selectedDate)) ? member.monthlyAmount : 0;
-      
       const paidThisMonth = payments
         .filter(p => p.memberId === member.id && isSameMonth(new Date(p.date), selectedDate))
         .reduce((sum, p) => sum + p.amount, 0);
+      
+      const balanceForMonth = paidThisMonth - dueThisMonth;
 
       let status: MemberBalance['status'] = 'unpaid';
-      if (balance >= 0) status = 'paid';
-      if (balance > member.monthlyAmount) status = 'ahead';
-      if (balance < 0) status = 'pending';
+      if (balanceForMonth >= 0) status = 'paid';
+      if (balanceForMonth > 0) status = 'ahead';
+      if (balanceForMonth < 0) status = 'pending';
+
 
       return {
         member,
-        totalDue,
-        totalPaid,
-        balance,
+        balanceForMonth,
         dueThisMonth,
         paidThisMonth,
         status,
+        cumulativeBalance,
       };
     });
   }, [members, payments, selectedDate]);
 
   const totalOutstanding = useMemo(() => {
-    return balances.reduce((sum, b) => (b.balance < 0 ? sum + b.balance : sum), 0);
+    // This now correctly represents the sum of all negative cumulative balances.
+    return balances.reduce((sum, b) => (b.cumulativeBalance < 0 ? sum + b.cumulativeBalance : sum), 0);
   }, [balances]);
 
   const statusInfo = {
@@ -96,7 +96,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
     },
     ahead: {
       Icon: CheckCircle2,
-      label: 'Ahead',
+      label: 'Paid Extra',
       className: 'bg-primary/20 text-primary-foreground/80 border-primary/30',
       iconClass: 'text-primary'
     },
@@ -127,7 +127,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
       <Card>
         <CardHeader>
           <CardTitle>Total Outstanding Balance</CardTitle>
-          <CardDescription>Sum of all pending balances across all members.</CardDescription>
+          <CardDescription>Sum of all pending balances across all members up to the selected month.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className={`text-4xl font-bold ${totalOutstanding < 0 ? 'text-destructive' : 'text-green-400'}`}>
@@ -138,8 +138,8 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {balances.map(b => {
-            const currentStatusInfo = b.paidThisMonth === 0 && b.balance < 0 ? statusInfo.unpaid : statusInfo[b.status];
-            const progress = b.dueThisMonth > 0 ? Math.min((b.paidThisMonth / b.dueThisMonth) * 100, 100) : (b.balance > 0 ? 100 : 0);
+            const currentStatusInfo = b.paidThisMonth === 0 && b.balanceForMonth < 0 ? statusInfo.unpaid : statusInfo[b.status];
+            const progress = b.dueThisMonth > 0 ? Math.min((b.paidThisMonth / b.dueThisMonth) * 100, 100) : (b.balanceForMonth > 0 ? 100 : 0);
             
             return (
             <Card key={b.member.id} className="flex flex-col">
@@ -147,7 +147,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
                     <div className="flex justify-between items-start">
                         <div>
                             <CardTitle>{b.member.name}</CardTitle>
-                            <CardDescription>Overall Balance: <span className={b.balance < 0 ? 'text-destructive' : 'text-green-400'}>{formatCurrency(b.balance)}</span></CardDescription>
+                            <CardDescription>Overall Balance: <span className={b.cumulativeBalance < 0 ? 'text-destructive' : 'text-green-400'}>{formatCurrency(b.cumulativeBalance)}</span></CardDescription>
                         </div>
                         <Badge variant="outline" className={currentStatusInfo.className}>{currentStatusInfo.label}</Badge>
                     </div>
@@ -164,11 +164,11 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
                         <currentStatusInfo.Icon className={`h-3.5 w-3.5 ${currentStatusInfo.iconClass}`} />
                         <span>
-                        {b.status === 'pending' && `${formatCurrency(Math.abs(b.balance))} behind.`}
-                        {b.status === 'paid' && `Fully paid up.`}
-                        {b.status === 'ahead' && `${formatCurrency(b.balance)} ahead.`}
-                        {b.status === 'unpaid' && b.dueThisMonth > 0 && `Unpaid this month.`}
-                        {b.status === 'unpaid' && b.dueThisMonth === 0 && `Not yet started.`}
+                          {b.status === 'pending' && `${formatCurrency(Math.abs(b.balanceForMonth))} pending for this month.`}
+                          {b.status === 'paid' && `Paid for this month.`}
+                          {b.status === 'ahead' && `${formatCurrency(b.balanceForMonth)} extra this month.`}
+                          {b.status === 'unpaid' && b.dueThisMonth > 0 && `Unpaid this month.`}
+                          {b.status === 'unpaid' && b.dueThisMonth === 0 && `Not yet started.`}
                         </span>
                     </p>
                 </CardFooter>
