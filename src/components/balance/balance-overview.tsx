@@ -49,16 +49,16 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
 
       // Cumulative balance calculation up to the end of the selected month
       const monthsDueCumulative = isBefore(memberStartDate, endOfMonth(selectedDate))
-        ? differenceInCalendarMonths(endOfMonth(selectedDate), memberStartDate) + 1
+        ? differenceInCalendarMonths(endOfMonth(selectedDate), startOfMonth(memberStartDate)) + 1
         : 0;
       const totalDueCumulative = monthsDueCumulative * member.monthlyAmount;
       const totalPaidCumulative = payments
-        .filter(p => p.memberId === member.id && isBefore(new Date(p.date), endOfMonth(selectedDate)))
+        .filter(p => p.memberId === member.id && !isBefore(startOfMonth(selectedDate), new Date(p.date)))
         .reduce((sum, p) => sum + p.amount, 0);
       const cumulativeBalance = totalPaidCumulative - totalDueCumulative;
 
       // Month-specific calculation
-      const dueThisMonth = isBefore(memberStartDate, endOfMonth(selectedDate)) ? member.monthlyAmount : 0;
+      const dueThisMonth = isBefore(startOfMonth(memberStartDate), endOfMonth(selectedDate)) ? member.monthlyAmount : 0;
       const paidThisMonth = payments
         .filter(p => p.memberId === member.id && isSameMonth(new Date(p.date), selectedDate))
         .reduce((sum, p) => sum + p.amount, 0);
@@ -69,6 +69,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
       if (balanceForMonth >= 0) status = 'paid';
       if (balanceForMonth > 0) status = 'ahead';
       if (balanceForMonth < 0) status = 'pending';
+      if (paidThisMonth === 0 && balanceForMonth < 0) status = 'unpaid';
 
 
       return {
@@ -138,7 +139,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {balances.map(b => {
-            const currentStatusInfo = b.paidThisMonth === 0 && b.balanceForMonth < 0 ? statusInfo.unpaid : statusInfo[b.status];
+            const currentStatusInfo = statusInfo[b.status];
             const progress = b.dueThisMonth > 0 ? Math.min((b.paidThisMonth / b.dueThisMonth) * 100, 100) : (b.balanceForMonth > 0 ? 100 : 0);
             
             return (

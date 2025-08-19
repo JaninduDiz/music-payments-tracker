@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useData } from '@/context/data-context';
 import type { Member } from '@/types';
 import { formatCurrency } from '@/lib/utils';
-import { differenceInCalendarMonths, endOfMonth, isBefore } from 'date-fns';
+import { differenceInCalendarMonths, endOfMonth, isBefore, startOfMonth } from 'date-fns';
 import {
   Card,
   CardContent,
@@ -27,13 +27,13 @@ export function MemberBalanceCard({ member }: MemberBalanceCardProps) {
     
     // Calculate total amount due from member's start date until today
     const monthsDue = isBefore(memberStartDate, endOfMonth(today))
-      ? differenceInCalendarMonths(endOfMonth(today), memberStartDate) + 1
+      ? differenceInCalendarMonths(endOfMonth(today), startOfMonth(memberStartDate)) + 1
       : 0;
     const totalDue = monthsDue * member.monthlyAmount;
 
     // Calculate total amount paid by the member until today
     const totalPaid = payments
-      .filter(p => p.memberId === member.id && isBefore(new Date(p.date), endOfMonth(today)))
+      .filter(p => p.memberId === member.id && !isBefore(startOfMonth(today), new Date(p.date)))
       .reduce((sum, p) => sum + p.amount, 0);
 
     return totalPaid - totalDue;
@@ -49,7 +49,7 @@ export function MemberBalanceCard({ member }: MemberBalanceCardProps) {
     }
     if (cumulativeBalance < 0) {
       return {
-        text: `${formatCurrency(cumulativeBalance)} behind`,
+        text: `${formatCurrency(Math.abs(cumulativeBalance))} behind`,
         className: 'text-destructive',
         description: 'This member has an outstanding balance.'
       };
