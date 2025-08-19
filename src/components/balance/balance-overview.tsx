@@ -128,10 +128,9 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
       <Card>
         <CardHeader>
           <CardTitle>Total Outstanding Balance</CardTitle>
-          <CardDescription>Sum of all pending balances across all members up to the selected month.</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className={`text-4xl font-bold ${totalOutstanding < 0 ? 'text-destructive' : 'text-green-400'}`}>
+          <p className={`text-3xl font-bold ${totalOutstanding < 0 ? 'text-destructive' : 'text-green-400'}`}>
             {formatCurrency(totalOutstanding)}
           </p>
         </CardContent>
