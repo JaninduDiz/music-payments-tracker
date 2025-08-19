@@ -17,27 +17,36 @@ function MemberPaymentPageContent() {
     const memberId = params.memberId as string;
     const member = getMemberById(memberId);
 
-    if (loading) {
-        return (
-             <div className="container mx-auto max-w-4xl p-4 md:p-6 space-y-6">
+    const PageSkeleton = () => (
+         <div className="flex flex-col h-full">
+            <div className="container mx-auto max-w-4xl p-4 md:p-6 border-b bg-background">
                 <div className="flex items-center gap-4 mb-2">
                     <Skeleton className="h-8 w-8" />
                     <Skeleton className="h-8 w-48" />
                 </div>
                 <Skeleton className="h-9 w-64" />
-                <Card>
-                    <CardHeader>
-                        <Skeleton className="h-6 w-40" />
-                        <Skeleton className="h-4 w-64" />
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
-                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
-                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
-                    </CardContent>
-                </Card>
+                <Skeleton className="h-5 w-80 mt-1" />
             </div>
-        )
+            <div className="flex-1 overflow-y-auto">
+                <div className="container mx-auto max-w-4xl p-4 md:p-6">
+                    <Card>
+                        <CardHeader>
+                            <Skeleton className="h-6 w-40" />
+                            <Skeleton className="h-4 w-64" />
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                            <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                            <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+    )
+
+    if (loading) {
+        return <PageSkeleton />;
     }
 
     if (!member) {
@@ -52,8 +61,8 @@ function MemberPaymentPageContent() {
     }
 
     return (
-        <div className="container mx-auto max-w-4xl p-4 md:p-6">
-            <div className="mb-6">
+       <div className="flex flex-col h-full">
+            <div className="container mx-auto max-w-4xl p-4 md:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
                 <Button asChild variant="ghost" className="-ml-4 mb-2">
                     <Link href="/members">
                         <ArrowLeft className="mr-2" />
@@ -63,7 +72,11 @@ function MemberPaymentPageContent() {
                 <h1 className="text-3xl font-bold tracking-tight">Payments for {member.name}</h1>
                 <p className="text-muted-foreground">A complete history of payments for this member.</p>
             </div>
-            <RecentPayments memberId={memberId} />
+            <div className="flex-1 overflow-y-auto">
+                <div className="container mx-auto max-w-4xl p-4 md:p-6">
+                    <RecentPayments memberId={memberId} />
+                </div>
+            </div>
         </div>
     )
 }
@@ -76,3 +89,4 @@ export default function MemberPaymentPage() {
         </Suspense>
     )
 }
+

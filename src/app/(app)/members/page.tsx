@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -54,18 +55,24 @@ export default function MembersPage() {
 
 
   return (
-    <div className="container mx-auto max-w-4xl p-4 md:p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="grid gap-1">
-            <h1 className="text-3xl font-bold tracking-tight">Members</h1>
-            <p className="text-muted-foreground">Manage your family members and their payment amounts.</p>
-        </div>
-        <Button onClick={() => openForm()} size="sm" className="shrink-0">
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Member
-        </Button>
-      </div>
+    <div className="flex flex-col h-full">
+       <div className="container mx-auto max-w-4xl p-4 md:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
+          <div className="flex items-center justify-between">
+            <div className="grid gap-1">
+                <h1 className="text-3xl font-bold tracking-tight">Members</h1>
+                <p className="text-muted-foreground">Manage your family members and their payment amounts.</p>
+            </div>
+            <Button onClick={() => openForm()} size="sm" className="shrink-0">
+              <PlusCircle className="mr-2 h-4 w-4" /> Add Member
+            </Button>
+          </div>
+       </div>
       
-      {loading ? <MemberListSkeleton /> : <MemberList onEdit={openForm} />}
+      <div className="flex-1 overflow-y-auto">
+        <div className="container mx-auto max-w-4xl p-4 md:p-6">
+            {loading ? <MemberListSkeleton /> : <MemberList onEdit={openForm} />}
+        </div>
+      </div>
 
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
