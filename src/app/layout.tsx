@@ -6,12 +6,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 export const metadata: Metadata = {
   title: 'Music Payments',
   description: 'Manage family music payments easily.',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Music Payments",
-  },
 };
 
 export const viewport: Viewport = {
@@ -35,7 +29,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider

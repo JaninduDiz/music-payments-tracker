@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Suspense } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 function MemberPaymentPageContent() {
     const params = useParams();
@@ -19,8 +20,22 @@ function MemberPaymentPageContent() {
     if (loading) {
         return (
              <div className="container mx-auto max-w-4xl p-4 md:p-6 space-y-6">
-                <Skeleton className="h-8 w-48" />
-                <Skeleton className="h-96 w-full" />
+                <div className="flex items-center gap-4 mb-2">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-48" />
+                </div>
+                <Skeleton className="h-9 w-64" />
+                <Card>
+                    <CardHeader>
+                        <Skeleton className="h-6 w-40" />
+                        <Skeleton className="h-4 w-64" />
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                        <div className="flex items-center"><Skeleton className="h-9 w-9 rounded-full" /><div className="ml-4 space-y-1"><Skeleton className="h-4 w-24" /><Skeleton className="h-3 w-32" /></div><Skeleton className="h-5 w-20 ml-auto" /></div>
+                    </CardContent>
+                </Card>
             </div>
         )
     }
@@ -56,7 +71,7 @@ function MemberPaymentPageContent() {
 
 export default function MemberPaymentPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Skeleton className="h-screen w-full" />}>
             <MemberPaymentPageContent />
         </Suspense>
     )

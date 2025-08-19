@@ -15,9 +15,10 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { useToast } from "@/hooks/use-toast"
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function MembersPage() {
-  const { addMember, updateMember } = useData();
+  const { addMember, updateMember, loading } = useData();
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
@@ -42,6 +43,15 @@ export default function MembersPage() {
     setSelectedMember(member);
     setIsFormOpen(true);
   }
+  
+  const MemberListSkeleton = () => (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+          <Skeleton className="h-36 w-full" />
+      </div>
+  )
+
 
   return (
     <div className="container mx-auto max-w-4xl p-4 md:p-6">
@@ -54,7 +64,9 @@ export default function MembersPage() {
           <PlusCircle className="mr-2 h-4 w-4" /> Add Member
         </Button>
       </div>
-      <MemberList onEdit={openForm} />
+      
+      {loading ? <MemberListSkeleton /> : <MemberList onEdit={openForm} />}
+
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent>
