@@ -60,7 +60,6 @@ export default function MembersPage() {
           <div className="flex items-center justify-between">
             <div className="grid gap-1">
                 <h1 className="text-3xl font-bold tracking-tight">Members</h1>
-                <p className="text-muted-foreground">Manage your family members and their payment amounts.</p>
             </div>
             <Button onClick={() => openForm()} size="sm" className="shrink-0">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Member

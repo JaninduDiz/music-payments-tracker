@@ -17,7 +17,6 @@ export default function BalancePage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="grid gap-1">
               <h1 className="text-3xl font-bold tracking-tight">Balance</h1>
-              <p className="text-muted-foreground">An overview of all member balances.</p>
           </div>
           <MonthSelector currentDate={selectedDate} onDateChange={setSelectedDate} />
         </div>

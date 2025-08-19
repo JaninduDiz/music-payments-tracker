@@ -72,7 +72,6 @@ function MemberPaymentPageContent() {
                     </Link>
                 </Button>
                 <h1 className="text-3xl font-bold tracking-tight">Payments for {member.name}</h1>
-                <p className="text-muted-foreground">A complete history of payments for this member.</p>
             </div>
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto max-w-4xl p-4 md:p-6 space-y-4">

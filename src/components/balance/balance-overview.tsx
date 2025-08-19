@@ -98,7 +98,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
     ahead: {
       Icon: CheckCircle2,
       label: 'Paid Extra',
-      className: 'bg-primary/20 text-primary-foreground/80 border-primary/30',
+      className: 'bg-primary/20 text-white-600/80 border-primary/30',
       iconClass: 'text-primary'
     },
     pending: {

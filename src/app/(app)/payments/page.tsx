@@ -10,7 +10,6 @@ function PaymentsContent() {
        <div className="flex flex-col h-full">
             <div className="container mx-auto max-w-6xl p-4 md:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
                  <h1 className="text-3xl font-bold tracking-tight">Payments</h1>
-                 <p className="text-muted-foreground">Record new payments and view recent activity.</p>
             </div>
             <div className="flex-1 overflow-y-auto">
                 <div className="container mx-auto max-w-6xl p-4 md:p-6">
