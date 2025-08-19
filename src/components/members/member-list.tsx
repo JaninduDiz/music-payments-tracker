@@ -40,11 +40,7 @@ export function MemberList({ onEdit }: MemberListProps) {
         }
     }
 
-    const handleCardClick = (e: React.MouseEvent, memberId: string) => {
-        // Stop propagation if the click is on the dropdown menu button or its children
-        if ((e.target as HTMLElement).closest('[data-radix-dropdown-menu-trigger]')) {
-            return;
-        }
+    const handleCardClick = (memberId: string) => {
         router.push(`/members/${memberId}`);
     }
 
@@ -62,24 +58,24 @@ export function MemberList({ onEdit }: MemberListProps) {
         <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {members.map((member) => (
-                    <Card key={member.id} className="flex flex-col cursor-pointer hover:bg-muted/50" onClick={(e) => handleCardClick(e, member.id)}>
+                    <Card key={member.id} className="flex flex-col cursor-pointer hover:bg-muted/50" onClick={() => handleCardClick(member.id)}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="grid gap-1">
                                 <CardTitle>{member.name}</CardTitle>
                                 <CardDescription>{formatCurrency(member.monthlyAmount)} / month</CardDescription>
                             </div>
                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
+                                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                                 <Button variant="ghost" size="icon">
                                     <MoreVertical className="h-4 w-4" />
                                 </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); onEdit(member); }}>
+                                <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenuItem onSelect={() => onEdit(member)}>
                                     <Edit className="mr-2 h-4 w-4" />
                                     <span>Edit</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); handleToggleStatus(member); }}>
+                                <DropdownMenuItem onSelect={() => handleToggleStatus(member)}>
                                     {member.isActive ? (
                                         <UserX className="mr-2 h-4 w-4" />
                                     ) : (
@@ -88,7 +84,7 @@ export function MemberList({ onEdit }: MemberListProps) {
                                     <span>Set as {member.isActive ? 'Inactive' : 'Active'}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); setDeletingMember(member); }} className="text-destructive focus:text-destructive">
+                                <DropdownMenuItem onSelect={() => setDeletingMember(member)} className="text-destructive focus:text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>Delete</span>
                                 </DropdownMenuItem>
