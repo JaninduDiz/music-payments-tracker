@@ -1,7 +1,7 @@
 {
-  "name": "Music Payments",
-  "short_name": "MusicPayments",
-  "description": "Manage family music payments easily.",
+  "name": "Music Payments Tracker",
+  "short_name": "Payments",
+  "description": "A simple app to track shared music lesson payments.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

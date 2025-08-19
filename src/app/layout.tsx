@@ -6,6 +6,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 export const metadata: Metadata = {
   title: 'Music Payments',
   description: 'Manage family music payments easily.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Music Payments",
+  },
 };
 
 export const viewport: Viewport = {
