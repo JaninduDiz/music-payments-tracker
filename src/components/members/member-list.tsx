@@ -16,6 +16,7 @@ import type { Member } from '@/types';
 import { useData } from '@/context/data-context';
 import { formatCurrency } from '@/lib/utils';
 import { DeleteMemberAlert } from './delete-member-alert';
+import { useRouter } from 'next/navigation';
 
 interface MemberListProps {
   onEdit: (member: Member) => void;
@@ -24,6 +25,7 @@ interface MemberListProps {
 export function MemberList({ onEdit }: MemberListProps) {
     const { members, updateMember, deleteMember } = useData();
     const [deletingMember, setDeletingMember] = useState<Member | null>(null);
+    const router = useRouter();
 
 
     const handleToggleStatus = async (member: Member) => {
@@ -35,6 +37,14 @@ export function MemberList({ onEdit }: MemberListProps) {
             await deleteMember(deletingMember.id);
             setDeletingMember(null);
         }
+    }
+
+    const handleCardClick = (e: React.MouseEvent, memberId: string) => {
+        // Stop propagation if the click is on the dropdown menu button or its children
+        if ((e.target as HTMLElement).closest('[data-radix-dropdown-menu-trigger]')) {
+            return;
+        }
+        router.push(`/payments?memberId=${memberId}`);
     }
 
     if (members.length === 0) {
@@ -51,7 +61,7 @@ export function MemberList({ onEdit }: MemberListProps) {
         <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {members.map((member) => (
-                    <Card key={member.id} className="flex flex-col">
+                    <Card key={member.id} className="flex flex-col cursor-pointer hover:bg-muted/50" onClick={(e) => handleCardClick(e, member.id)}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="grid gap-1">
                                 <CardTitle>{member.name}</CardTitle>
@@ -64,11 +74,11 @@ export function MemberList({ onEdit }: MemberListProps) {
                                 </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                <DropdownMenuItem onSelect={() => onEdit(member)}>
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); onEdit(member); }}>
                                     <Edit className="mr-2 h-4 w-4" />
                                     <span>Edit</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={() => handleToggleStatus(member)}>
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); handleToggleStatus(member); }}>
                                     {member.isActive ? (
                                         <UserX className="mr-2 h-4 w-4" />
                                     ) : (
@@ -77,7 +87,7 @@ export function MemberList({ onEdit }: MemberListProps) {
                                     <span>Set as {member.isActive ? 'Inactive' : 'Active'}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onSelect={() => setDeletingMember(member)} className="text-destructive focus:text-destructive">
+                                <DropdownMenuItem onSelect={(e) => { e.stopPropagation(); setDeletingMember(member); }} className="text-destructive focus:text-destructive">
                                     <Trash2 className="mr-2 h-4 w-4" />
                                     <span>Delete</span>
                                 </DropdownMenuItem>

@@ -2,12 +2,12 @@
 
 import { PaymentForm } from '@/components/payments/payment-form';
 import { RecentPayments } from '@/components/payments/recent-payments';
-import { AISearch } from '@/components/ai/ai-search';
-import { useState } from 'react';
-import type { Payment } from '@/types';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function PaymentsPage() {
-    const [filteredPayments, setFilteredPayments] = useState<Payment[] | null>(null);
+function PaymentsContent() {
+    const searchParams = useSearchParams();
+    const memberId = searchParams.get('memberId');
 
     return (
         <div className="container mx-auto max-w-6xl p-4 md:p-6">
@@ -18,12 +18,20 @@ export default function PaymentsPage() {
             <div className="grid gap-8 lg:grid-cols-5">
                 <div className="space-y-8 lg:col-span-2">
                     <PaymentForm />
-                    <AISearch onResults={setFilteredPayments} />
                 </div>
                 <div className="lg:col-span-3">
-                    <RecentPayments filteredPayments={filteredPayments} />
+                    <RecentPayments memberId={memberId} />
                 </div>
             </div>
         </div>
     );
+}
+
+
+export default function PaymentsPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <PaymentsContent />
+        </Suspense>
+    )
 }
