@@ -1,3 +1,4 @@
+
 'use client';
 
 import { PaymentForm } from '@/components/payments/payment-form';
@@ -6,9 +7,6 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
 function PaymentsContent() {
-    const searchParams = useSearchParams();
-    const memberId = searchParams.get('memberId');
-
     return (
         <div className="container mx-auto max-w-6xl p-4 md:p-6">
             <div className="mb-6">
@@ -20,7 +18,7 @@ function PaymentsContent() {
                     <PaymentForm />
                 </div>
                 <div className="lg:col-span-3">
-                    <RecentPayments memberId={memberId} />
+                    <RecentPayments />
                 </div>
             </div>
         </div>

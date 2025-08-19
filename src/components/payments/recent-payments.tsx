@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useData } from '@/context/data-context';
@@ -19,8 +20,10 @@ export function RecentPayments({ memberId }: RecentPaymentsProps) {
   const { payments, getMemberById } = useData();
 
   const filteredPayments = useMemo(() => {
-    if (!memberId) return payments;
-    return payments.filter(p => p.memberId === memberId);
+    // We sort here to ensure consistent order
+    const sortedPayments = [...payments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    if (!memberId) return sortedPayments;
+    return sortedPayments.filter(p => p.memberId === memberId);
   }, [payments, memberId]);
 
   const memberName = memberId ? getMemberById(memberId)?.name : null;
@@ -93,7 +96,7 @@ export function RecentPayments({ memberId }: RecentPaymentsProps) {
              {memberName && (
                 <div className="mt-4 text-center">
                     <Button asChild variant="link">
-                        <Link href="/payments">View all payments</Link>
+                        <Link href="/payments">Record a new payment</Link>
                     </Button>
                 </div>
             )}

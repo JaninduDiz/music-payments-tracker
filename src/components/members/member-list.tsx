@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -44,7 +45,7 @@ export function MemberList({ onEdit }: MemberListProps) {
         if ((e.target as HTMLElement).closest('[data-radix-dropdown-menu-trigger]')) {
             return;
         }
-        router.push(`/payments?memberId=${memberId}`);
+        router.push(`/members/${memberId}`);
     }
 
     if (members.length === 0) {
