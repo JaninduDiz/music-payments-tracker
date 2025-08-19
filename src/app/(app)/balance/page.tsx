@@ -14,7 +14,7 @@ export default function BalancePage() {
   return (
     <div className="flex flex-col h-full">
       <div className="container mx-auto max-w-6xl p-4 md:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-row items-center justify-between">
           <div className="grid gap-1">
               <h1 className="text-3xl font-bold tracking-tight">Balance</h1>
           </div>
