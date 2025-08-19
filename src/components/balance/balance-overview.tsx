@@ -53,7 +53,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
         : 0;
       const totalDueCumulative = monthsDueCumulative * member.monthlyAmount;
       const totalPaidCumulative = payments
-        .filter(p => p.memberId === member.id && !isBefore(startOfMonth(selectedDate), new Date(p.date)))
+        .filter(p => p.memberId === member.id && isBefore(new Date(p.date), endOfMonth(selectedDate)))
         .reduce((sum, p) => sum + p.amount, 0);
       const cumulativeBalance = totalPaidCumulative - totalDueCumulative;
 

@@ -33,7 +33,7 @@ export function MemberBalanceCard({ member }: MemberBalanceCardProps) {
 
     // Calculate total amount paid by the member until today
     const totalPaid = payments
-      .filter(p => p.memberId === member.id && !isBefore(startOfMonth(today), new Date(p.date)))
+      .filter(p => p.memberId === member.id && isBefore(new Date(p.date), endOfMonth(today)))
       .reduce((sum, p) => sum + p.amount, 0);
 
     return totalPaid - totalDue;
