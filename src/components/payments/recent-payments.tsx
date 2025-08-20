@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useData } from '@/context/data-context';
@@ -7,26 +8,51 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { Payment } from '@/types';
+import { useMemo } from 'react';
+import Link from 'next/link';
+import { Button } from '../ui/button';
 
 interface RecentPaymentsProps {
-  filteredPayments?: Payment[] | null;
+  memberId?: string | null;
 }
 
-export function RecentPayments({ filteredPayments }: RecentPaymentsProps) {
+export function RecentPayments({ memberId }: RecentPaymentsProps) {
   const { payments, getMemberById } = useData();
 
-  const displayPayments = filteredPayments ?? payments;
+  const filteredPayments = useMemo(() => {
+    // We sort here to ensure consistent order
+    const sortedPayments = [...payments].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    if (!memberId) return sortedPayments;
+    return sortedPayments.filter(p => p.memberId === memberId);
+  }, [payments, memberId]);
 
-  if (displayPayments.length === 0) {
+  const memberName = memberId ? getMemberById(memberId)?.name : null;
+
+  if (filteredPayments.length === 0) {
     return (
         <Card className="h-full">
             <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>No payments recorded yet.</CardDescription>
+                <CardDescription>
+                  {memberName 
+                    ? `No payments recorded for ${memberName}.`
+                    : "No payments recorded yet."
+                  }
+                </CardDescription>
             </CardHeader>
             <CardContent className="flex h-full items-center justify-center pb-16">
                  <div className="text-center">
-                    <p className="text-muted-foreground">{filteredPayments ? "No payments found for your search." : "Your recent payments will show up here."}</p>
+                    <p className="text-muted-foreground">
+                      {memberName
+                        ? `Payments for ${memberName} will appear here.`
+                        : "Your recent payments will show up here."
+                      }
+                    </p>
+                    {memberName && (
+                      <Button asChild variant="link" className="mt-2">
+                        <Link href="/payments">View all payments</Link>
+                      </Button>
+                    )}
                  </div>
             </CardContent>
         </Card>
@@ -36,13 +62,17 @@ export function RecentPayments({ filteredPayments }: RecentPaymentsProps) {
   return (
     <Card>
         <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>{filteredPayments ? "Showing results from your search." : "A log of the most recent payments."}</CardDescription>
+            <CardTitle>{memberName ? `Payments for ${memberName}` : 'Recent Activity'}</CardTitle>
+            <CardDescription>
+                {memberName 
+                    ? `A log of all payments for ${memberName}.` 
+                    : "A log of the most recent payments."}
+            </CardDescription>
         </CardHeader>
         <CardContent>
             <ScrollArea className="h-[450px]">
                 <div className="space-y-4">
-                    {displayPayments.map(payment => {
+                    {filteredPayments.map(payment => {
                         const member = getMemberById(payment.memberId);
                         return (
                         <div key={payment.id} className="flex items-center">
@@ -63,6 +93,13 @@ export function RecentPayments({ filteredPayments }: RecentPaymentsProps) {
                     })}
                 </div>
             </ScrollArea>
+             {memberName && (
+                <div className="mt-4 text-center">
+                    <Button asChild variant="link">
+                        <Link href="/payments">Record a new payment</Link>
+                    </Button>
+                </div>
+            )}
         </CardContent>
     </Card>
   );

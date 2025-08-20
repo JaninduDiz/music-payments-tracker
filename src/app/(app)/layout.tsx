@@ -8,8 +8,8 @@ export default function AppLayout({
 }) {
   return (
     <DataProvider>
-      <div className="flex min-h-screen flex-col">
-        <main className="flex-1 pb-24" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex flex-col h-screen">
+        <main className="flex-1 overflow-hidden pb-16" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
           {children}
         </main>
         <MainNav />

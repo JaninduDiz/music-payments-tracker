@@ -15,10 +15,10 @@ export default function MainNav() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-background/80 backdrop-blur-sm" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <header className="fixed bottom-0 left-0 right-0 z-20 border-t border-border/50 bg-background/80 backdrop-blur-sm" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <nav className="container flex h-16 max-w-4xl justify-around">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
