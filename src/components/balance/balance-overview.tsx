@@ -130,7 +130,7 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
           <CardTitle>Total Outstanding Balance</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className={`text-3xl font-bold ${totalOutstanding < 0 ? 'text-destructive' : 'text-green-400'}`}>
+          <p className={`text-2xl font-bold ${totalOutstanding < 0 ? 'text-destructive' : 'text-green-400'}`}>
             {formatCurrency(totalOutstanding)}
           </p>
         </CardContent>
@@ -146,24 +146,24 @@ export function BalanceOverview({ selectedDate }: BalanceOverviewProps) {
                 <CardHeader>
                     <div className="flex justify-between items-start">
                         <div>
-                            <CardTitle>{b.member.name}</CardTitle>
+                            <CardTitle className="text-xl">{b.member.name}</CardTitle>
                             <CardDescription>Overall Balance: <span className={b.cumulativeBalance < 0 ? 'text-destructive' : 'text-green-400'}>{formatCurrency(b.cumulativeBalance)}</span></CardDescription>
                         </div>
                         <Badge variant="outline" className={currentStatusInfo.className}>{currentStatusInfo.label}</Badge>
                     </div>
                 </CardHeader>
                 <CardContent className="flex-grow space-y-2">
-                   <p className="text-sm text-muted-foreground">This Month's Payment</p>
+                   <p className="text-xs text-muted-foreground">This Month's Payment</p>
                     <div className="flex items-center gap-2">
-                        <span className="text-lg font-semibold">{formatCurrency(b.paidThisMonth)}</span>
-                        <span className="text-sm text-muted-foreground">/ {formatCurrency(b.dueThisMonth)}</span>
+                        <span className="text-base font-semibold">{formatCurrency(b.paidThisMonth)}</span>
+                        <span className="text-xs text-muted-foreground">/ {formatCurrency(b.dueThisMonth)}</span>
                     </div>
                    <Progress value={progress} className={b.status === 'pending' ? '[&>div]:bg-yellow-400' : ''} />
                 </CardContent>
                 <CardFooter>
                     <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                        <currentStatusInfo.Icon className={`h-3.5 w-3.5 ${currentStatusInfo.iconClass}`} />
-                        <span>
+                        <currentStatusInfo.Icon className={`h-3 w-3 ${currentStatusInfo.iconClass}`} />
+                        <span className="text-[11px]">
                           {b.status === 'pending' && `${formatCurrency(Math.abs(b.balanceForMonth))} pending for this month.`}
                           {b.status === 'paid' && `Paid for this month.`}
                           {b.status === 'ahead' && `${formatCurrency(b.balanceForMonth)} extra this month.`}

@@ -68,7 +68,7 @@ export function MemberBalanceCard({ member }: MemberBalanceCardProps) {
         <CardDescription>{balanceStatus.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className={`text-2xl font-bold ${balanceStatus.className}`}>
+        <p className={`text-xl font-bold ${balanceStatus.className}`}>
           {balanceStatus.text}
         </p>
       </CardContent>

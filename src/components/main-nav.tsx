@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -24,7 +25,7 @@ export default function MainNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-1 flex-col items-center justify-center gap-1 p-2 text-xs font-medium transition-all duration-300 ease-in-out',
+                'flex flex-1 flex-col items-center justify-center gap-1 p-2 text-[11px] font-medium transition-all duration-300 ease-in-out',
                 isActive
                   ? 'text-primary scale-110'
                   : 'text-muted-foreground hover:text-foreground'

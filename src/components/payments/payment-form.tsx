@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -153,7 +154,7 @@ export function PaymentForm() {
               )}
             />
             <Button type="submit" className="w-full" disabled={activeMembers.length === 0 || form.formState.isSubmitting}>Add Payment</Button>
-            {activeMembers.length === 0 && <p className="text-sm text-center text-muted-foreground pt-2">Add an active member first to record a payment.</p>}
+            {activeMembers.length === 0 && <p className="text-xs text-center text-muted-foreground pt-2">Add an active member first to record a payment.</p>}
           </form>
         </Form>
       </CardContent>

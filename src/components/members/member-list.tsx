@@ -48,8 +48,8 @@ export function MemberList({ onEdit }: MemberListProps) {
         return (
             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted bg-card p-12 text-center">
                 <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-semibold">No Members Found</h3>
-                <p className="mt-2 text-sm text-muted-foreground">Add a new member to get started.</p>
+                <h3 className="mt-4 text-base font-semibold">No Members Found</h3>
+                <p className="mt-2 text-xs text-muted-foreground">Add a new member to get started.</p>
             </div>
         )
     }
@@ -61,7 +61,7 @@ export function MemberList({ onEdit }: MemberListProps) {
                     <Card key={member.id} className="flex flex-col cursor-pointer hover:bg-muted/50" onClick={() => handleCardClick(member.id)}>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="grid gap-1">
-                                <CardTitle>{member.name}</CardTitle>
+                                <CardTitle className="text-xl">{member.name}</CardTitle>
                                 <CardDescription>{formatCurrency(member.monthlyAmount)} / month</CardDescription>
                             </div>
                             <DropdownMenu>

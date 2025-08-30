@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -86,7 +87,7 @@ export function MemberForm({ onSubmit, onFinished, member }: MemberFormProps) {
             render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active Member</FormLabel>
+                    <FormLabel className="text-sm">Active Member</FormLabel>
                 </div>
                 <FormControl>
                     <Switch

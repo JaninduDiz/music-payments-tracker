@@ -42,7 +42,7 @@ export function RecentPayments({ memberId }: RecentPaymentsProps) {
             </CardHeader>
             <CardContent className="flex h-full items-center justify-center pb-16">
                  <div className="text-center">
-                    <p className="text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {memberName
                         ? `Payments for ${memberName} will appear here.`
                         : "Your recent payments will show up here."
@@ -83,7 +83,7 @@ export function RecentPayments({ memberId }: RecentPaymentsProps) {
                             <p className="text-sm font-medium leading-none">
                                 {member?.name || 'Unknown Member'}
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-xs text-muted-foreground">
                                 {format(new Date(payment.date), 'MMMM dd, yyyy')}
                             </p>
                             </div>

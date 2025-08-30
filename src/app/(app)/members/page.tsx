@@ -59,7 +59,7 @@ export default function MembersPage() {
        <div className="container mx-auto max-w-4xl p-4 md:p-6 border-b bg-background/95 backdrop-blur-sm sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="grid gap-1">
-                <h1 className="text-3xl font-bold tracking-tight">Members</h1>
+                <h1 className="text-2xl font-bold tracking-tight">Members</h1>
             </div>
             <Button onClick={() => openForm()} size="sm" className="shrink-0">
               <PlusCircle className="mr-2 h-4 w-4" /> Add Member
