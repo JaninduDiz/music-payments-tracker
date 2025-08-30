@@ -1,22 +1,27 @@
-name: Keep Supabase Alive
+name: Ping Supabase to Prevent Pausing
 
 on:
   schedule:
-    # Runs every day at midnight UTC. You can change the cron schedule if needed.
-    - cron: '0 0 * * *'
-  workflow_dispatch: # Allows manual triggering
+    # 9:00am (`0, 9`), every day (`*`), every month (`*`), monday and thursday (`1, 4`)
+    - cron: '0 9 * * 1,4'
+  workflow_dispatch:
 
 jobs:
-  ping-database:
+  ping:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Ping Supabase Members Table
-        run: |
-          curl -X GET \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/members?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            --fail
+      - name: Ping Supabase via PostgREST
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          response=$(curl -s \
+            -X GET "${SUPABASE_URL}/rest/v1/" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
+          if [ -z "$response" ]; then
+            echo "Error: empty response when pinging." >&2
+            exit 1
+          fi
+          echo "Successful ping: $response"

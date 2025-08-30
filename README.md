@@ -109,7 +109,7 @@ For instructions on how to change the application icon, see the [ICON_GUIDE.md](
 
 ## ❤️ Keeping Your Database Alive
 
-Supabase may pause projects on the free plan after a period of inactivity. To prevent this, this project includes a GitHub Action workflow that automatically "pings" your database once a day.
+Supabase may pause projects on the free plan after a period of inactivity. To prevent this, this project includes a GitHub Action workflow that automatically "pings" your database.
 
 To enable this, you need to add your Supabase credentials as secrets in your GitHub repository:
 
@@ -118,9 +118,9 @@ To enable this, you need to add your Supabase credentials as secrets in your Git
 3.  Click **New repository secret** for each of the following secrets:
 
     *   `SUPABASE_URL`: Your Supabase project URL (the same as `NEXT_PUBLIC_SUPABASE_URL`).
-    *   `SUPABASE_ANON_KEY`: Your Supabase anonymous key (the same as `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+    *   `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase **Service Role Key**. You can find this in your Supabase project's API settings. **Note:** This is a privileged key, so keep it secure.
 
-The workflow is located at `.github/workflows/keep-alive.yml` and will run automatically.
+The workflow is located at `.github/workflows/keep-alive.yml` and will run automatically based on the schedule you've set.
 
 ## 🚀 Deployment
 
